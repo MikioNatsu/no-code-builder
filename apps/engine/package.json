@@ -1,0 +1,21 @@
+{
+  "name": "@ncb/engine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "tsx watch --env-file-if-exists=../../.env src/main.ts",
+    "start": "node --env-file-if-exists=../../.env dist/main.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@ncb/core": "workspace:*",
+    "@ncb/db": "workspace:*",
+    "grammy": "^1.46.0"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15"
+  }
+}

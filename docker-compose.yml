@@ -1,0 +1,42 @@
+# Infrastructure for local development and the VPS.
+# App containers (web, engine) are added when deployment is set up.
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ncb}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      POSTGRES_DB: ${POSTGRES_DB:-ncb}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - ./data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER}"]
+      interval: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    ports:
+      - "127.0.0.1:6379:6379"
+    volumes:
+      - ./data/redis:/data
+
+  # Self-hosted Bot API server: 2000 MB uploads, unlimited downloads (docs/PLAN.md §7).
+  # A bot must call logOut on the cloud API once before it can use this server.
+  bot-api:
+    image: aiogram/telegram-bot-api:latest
+    restart: unless-stopped
+    environment:
+      TELEGRAM_API_ID: ${TELEGRAM_API_ID:?set TELEGRAM_API_ID in .env}
+      TELEGRAM_API_HASH: ${TELEGRAM_API_HASH:?set TELEGRAM_API_HASH in .env}
+      TELEGRAM_LOCAL: "1"
+    ports:
+      - "127.0.0.1:8081:8081"
+    volumes:
+      # Downloaded files land here; a cleanup job is needed so this doesn't fill the disk.
+      - ./data/bot-api:/var/lib/telegram-bot-api
