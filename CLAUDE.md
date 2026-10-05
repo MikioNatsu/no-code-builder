@@ -37,7 +37,7 @@ Workspace packages export `src/*.ts` for types and `dist/*.js` at runtime, so ru
 
 ## Rules
 
-- Every bot is one JSON **bot definition** (settings, tables, flows, texts, roles, limits). Templates, easy mode, the flow editor, custom code, and the AI builder all read and write that same definition.
+- Every bot is one JSON **bot definition** (languages, texts, tables, flows, settings). Templates, easy mode, the flow editor, custom code, and the AI builder all read and write that same definition.
 - Plan and limits live on the account in the database, not in the definition, so definitions can be copied between bots.
 - The built-in database stores rows in `table_rows` as JSON keyed by field id; the tables and fields themselves are defined in the bot definition.
 - Every row of per-bot data is scoped by bot ID. Cross-bot access must be impossible.
